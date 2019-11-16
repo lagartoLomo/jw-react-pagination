@@ -10,6 +10,7 @@ const propTypes = {
     pageSize: PropTypes.number,
     maxPages: PropTypes.number,
     forcedNumOfItems: PropTypes.number,
+    forcedPage: PropTypes.number,
     labels: PropTypes.object,
     styles: PropTypes.object,
     disableDefaultStyles: PropTypes.bool
@@ -17,6 +18,7 @@ const propTypes = {
 
 const defaultProps = {
     initialPage: 1,
+    forcedPage: 1,
     pageSize: 10,
     maxPages: 10,
     forcedNumOfItems: 0,
@@ -75,7 +77,7 @@ class JwPagination extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         // reset page if items array has changed
         if (this.props.items !== prevProps.items) {
-            this.setPage(this.props.initialPage);
+            this.setPage(this.props.forcedPage);
         }
     }
 
