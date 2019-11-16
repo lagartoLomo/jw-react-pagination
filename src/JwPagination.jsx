@@ -5,9 +5,11 @@ import paginate from 'jw-paginate';
 const propTypes = {
     items: PropTypes.array.isRequired,
     onChangePage: PropTypes.func.isRequired,
+    listenerPageChange: PropTypes.func,
     initialPage: PropTypes.number,
     pageSize: PropTypes.number,
     maxPages: PropTypes.number,
+    forcedNumOfItems: PropTypes.number,
     labels: PropTypes.object,
     styles: PropTypes.object,
     disableDefaultStyles: PropTypes.bool
@@ -17,6 +19,7 @@ const defaultProps = {
     initialPage: 1,
     pageSize: 10,
     maxPages: 10,
+    forcedNumOfItems: 0,
     labels: {
         first: 'First',
         last: 'Last',
@@ -77,11 +80,11 @@ class JwPagination extends React.Component {
     }
 
     setPage(page) {
-        var { items, pageSize, maxPages } = this.props;
+        var { items, pageSize, maxPages, forcedNumOfItems } = this.props;
         var pager = this.state.pager;
 
         // get new pager object for specified page
-        pager = paginate(items.length, page, pageSize, maxPages);
+        pager = paginate(items.length > forcedNumOfItems ? items.length : forcedNumOfItems, page, pageSize, maxPages);
 
         // get new page of items from items array
         var pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
@@ -91,6 +94,9 @@ class JwPagination extends React.Component {
 
         // call change page function in parent component
         this.props.onChangePage(pageOfItems);
+
+        // call to parent component's listenerPageChange function 
+        this.props.listenerPageChange(page);
     }
 
     render() {
@@ -98,7 +104,7 @@ class JwPagination extends React.Component {
         var labels = this.props.labels;
         var styles = this.styles;
 
-        if (!pager.pages || pager.pages.length <= 1) {
+        if (!pager.pages) {
             // don't display pager if there is only 1 page
             return null;
         }
